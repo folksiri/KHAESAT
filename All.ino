@@ -97,11 +97,11 @@ void loop()
     LoRa.print(",");
     LoRa.print(tempgy/340.00+36.53);
     LoRa.print(",");
-    LoRa.print(gx);
+    LoRa.print(gx/1000.00);
     LoRa.print(",");
-    LoRa.print(gy);
+    LoRa.print(gy/1000.00);
     LoRa.print(",");
-    LoRa.print(gz);
+    LoRa.print(gz/1000.00);
     LoRa.print(",");
     LoRa.print(gps.location.lat(),6);
     LoRa.print(",");
@@ -112,8 +112,6 @@ void loop()
     LoRa.print(gps.time.value());
     LoRa.print(",");
     LoRa.print(gps.speed.mps());
-    LoRa.print(",");
-    LoRa.print(gps.altitude.meters());
     LoRa.print(",");
     LoRa.print(temp);
     LoRa.print(",");
