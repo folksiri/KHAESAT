@@ -9,7 +9,7 @@
 #define DIO0_PIN   5
 
 //gps
-static const int RXPin = 4, TXPin = 3;
+static const int RXPin = 3, TXPin = 4;
 static const uint32_t GPSBaud = 9600;
 TinyGPSPlus gps;
 SoftwareSerial ss(RXPin, TXPin);
@@ -81,7 +81,8 @@ void setup()
 
 void loop()
   {
-    
+    Serial.print("@459"); 
+    Serial.print(","); 
     printBME280Data(&Serial);
     gySensor();
     gpsSensor();
@@ -120,7 +121,24 @@ void loop()
     LoRa.print(",");
     LoRa.print((101325-pres)/12.1202);
     LoRa.print(",");  
-    LoRa.endPacket();  
+    LoRa.endPacket(); 
+    /*Serial.print(","); Serial.print((ax));
+    Serial.print(","); Serial.print((ay));
+    Serial.print(","); Serial.print((az));
+    Serial.print(","); Serial.print(tempgy/340.00+36.53);
+    Serial.print(","); Serial.print((gx)/1000);
+    Serial.print(","); Serial.print((gy)/1000);
+    Serial.print(","); Serial.print((gz)/1000);
+    Serial.print(","); Serial.print(gps.location.lat(), 6);      
+    Serial.print(","); Serial.println(gps.location.lng(), 6); 
+    Serial.print(","); Serial.println(gps.date.value());
+    Serial.print(","); Serial.println(gps.time.value()); 
+    Serial.print(","); Serial.println(gps.speed.mps());
+    Serial.print(","); Serial.print(temp);
+    Serial.print(","); Serial.print(pres);
+    Serial.print(","); Serial.print((101325-pres)/12.1202);*/
+    Serial.print("\n");
+    delay(500);
   }
 void gySensor() {
   Wire.beginTransmission(MPU_ADDR);
@@ -141,25 +159,26 @@ void gySensor() {
   Serial.print(","); Serial.print((gx)/1000);
   Serial.print(","); Serial.print((gy)/1000);
   Serial.print(","); Serial.print((gz)/1000);
-  Serial.println();
-  delay(1000);
+  Serial.print(",");
+  //delay(1000);
 } 
 
 void gpsSensor()
       {
-      //Serial.print("Latitude= "); 
-      Serial.print(gps.location.lat(), 6);      
-      //Serial.print(" Longitude= "); 
-      Serial.println(gps.location.lng(), 6); 
-     //Serial.print("Raw date DDMMYY = ");
+        while (ss.available() > 0){
+    gps.encode(ss.read());
+    if (gps.location.isUpdated()){
+      Serial.print(gps.location.lat(), 6);
+      Serial.print(",");      
+      Serial.println(gps.location.lng(), 6);
+      Serial.print(","); 
       Serial.println(gps.date.value());
-     // Serial.print("Raw time in HHMMSSCC = "); 
-      Serial.println(gps.time.value()); 
-     // Serial.print("Speed in m/s = ");
+      Serial.print(",");
+      Serial.println(gps.time.value());
+      Serial.print(","); 
       Serial.println(gps.speed.mps()); 
-     // Serial.print("Altitude in meters = "); 
-      Serial.println(gps.altitude.meters());  
       }
+        }}
 
 void printBME280Data
 (
@@ -170,12 +189,10 @@ void printBME280Data
    BME280::TempUnit tempUnit(BME280::TempUnit_Celsius);
    BME280::PresUnit presUnit(BME280::PresUnit_Pa);
    bme.read(pres, temp, hum, tempUnit, presUnit);
-   client->print("Temp: ");
    client->print(temp);
-   client->print("°"+ String(tempUnit == BME280::TempUnit_Celsius ? 'C' :'F'));
-   client->print("\tPressure: ");
+   client->print(",");
    client->print(pres);
-   client->println("Pa ");
+   client->print(",");
    client->print((101325-pres)/12.1202);
-   delay(1000);
+   client->print(",");
 }
